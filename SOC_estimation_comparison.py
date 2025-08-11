@@ -1,5 +1,5 @@
 """
-Battery plant simulation and SOC estimation benchmark (MIONet vs. ECM)
+Battery plant simulation and SOC estimation comparison (MIONet vs. ECM)
 ---------------------------------------------------------------------
 
 Overview
@@ -504,4 +504,5 @@ if save == True:
     with open(file_name, 'wb') as f:
         pickle.dump(D, f)
         
+
     print(f'saved file {file_name}')
