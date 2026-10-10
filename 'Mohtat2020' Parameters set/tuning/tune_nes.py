@@ -5,8 +5,9 @@ Strategy (SNES, Schaul et al., 2011) on the TRAINING set.
 Search space: log10 of [P0, q, rV(, rLi)], with P = P0*I, Q = q*I, R = diag(rV, rLi).
 Objective:
     J = mean SOC RMSE [%] (t >= 600 s, capped at 20 % per scenario)
-        + max(0, 0.90 - mean 2-sigma coverage for t >= 600 s)
-The coverage term stops NES from buying RMSE with an over-confident filter.
+        + 5 * max(0, 0.95 - mean 2-sigma coverage over the whole run)
+The coverage term stops NES from buying RMSE with an over-confident filter; target and time
+window match the PICP of the CWC (mu = 0.95, whole run).
 
 Usage:  python tune_nes.py <variant> [generations] [population] [workers]
     variant: li_avg (particle-averaged Li balance) | li_surface (public release) | no_li
@@ -30,7 +31,8 @@ LI_SURFACE_TARGET = 0.9454372727901035  # target of the surface-node balance in 
 VARIANTS = {"li_avg": "avg", "li_surface": "surface", "no_li": "none"}
 PUBLIC = dict(P0=5e-3, q=(1e-4) ** 2, rV=(20e-3) ** 2, rLi=1e-3)  # start point: public release weights
 BOUNDS = {"P0": (-6, -1), "q": (-14, -4), "rV": (-8, -2), "rLi": (-10, 0)}
-COVERAGE_TARGET = 0.90
+COVERAGE_TARGET = 0.95
+COVERAGE_WEIGHT = 5.0
 RMSE_CAP = 20.0
 
 _G = {}
@@ -59,11 +61,11 @@ def objective(theta, names):
             e = (r["soc"] - d["soc_ref"])[ob.IDX_SS:]
             rm = np.sqrt(np.mean(e ** 2))
             rmse.append(min(rm, RMSE_CAP) if np.isfinite(rm) else RMSE_CAP)
-            s = d["soc_ref"][ob.IDX_SS:]
-            cover.append(np.mean((s >= r["soc_lower"][ob.IDX_SS:]) & (s <= r["soc_upper"][ob.IDX_SS:])))
+            s = d["soc_ref"]
+            cover.append(np.mean((s >= r["soc_lower"]) & (s <= r["soc_upper"])))
     except Exception:
         return 1e3
-    return float(np.mean(rmse) + max(0.0, COVERAGE_TARGET - np.mean(cover)))
+    return float(np.mean(rmse) + COVERAGE_WEIGHT * max(0.0, COVERAGE_TARGET - np.mean(cover)))
 
 
 def _obj(args):

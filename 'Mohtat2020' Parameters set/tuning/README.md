@@ -16,7 +16,8 @@ Produces `../observer_config.json` and the comparison tables. Run from this fold
 
 Notes:
 - **NES objective:** mean SOC RMSE over the training scenarios (t ≥ 600 s, capped at 20 %
-  per scenario), plus a penalty if the 2σ coverage drops below 90 %. The penalty stops NES
+  per scenario), plus 5 × the shortfall of the 2σ coverage (whole run) below 95 %, matching the
+  PICP of the CWC (μ = 0.95). The penalty stops NES
   from buying RMSE with an over-confident filter.
 - **Lithium balance:** `li_avg` uses the particle-averaged concentrations, which the plant
   conserves to < 1e-4. `li_surface` (public release) uses the surface nodes, which are not
