@@ -1,0 +1,26 @@
+C:\Users\alexa\anaconda3\Lib\site-packages\pybamm\simulation.py:122: UserWarning: The default solver changed to IDAKLUSolver after the v25.4.0. release. You can swap back to the previous default by using `pybamm.CasadiSolver()` instead.
+  self._solver = solver or self._model.default_solver
+C:\Users\alexa\anaconda3\Lib\site-packages\pybamm\simulation.py:122: UserWarning: The default solver changed to IDAKLUSolver after the v25.4.0. release. You can swap back to the previous default by using `pybamm.CasadiSolver()` instead.
+  self._solver = solver or self._model.default_solver
+C:\Users\alexa\anaconda3\Lib\site-packages\pybamm\simulation.py:122: UserWarning: The default solver changed to IDAKLUSolver after the v25.4.0. release. You can swap back to the previous default by using `pybamm.CasadiSolver()` instead.
+  self._solver = solver or self._model.default_solver
+C:\Users\alexa\anaconda3\Lib\site-packages\pybamm\simulation.py:122: UserWarning: The default solver changed to IDAKLUSolver after the v25.4.0. release. You can swap back to the previous default by using `pybamm.CasadiSolver()` instead.
+  self._solver = solver or self._model.default_solver
+C:\Users\alexa\anaconda3\Lib\site-packages\pybamm\simulation.py:122: UserWarning: The default solver changed to IDAKLUSolver after the v25.4.0. release. You can swap back to the previous default by using `pybamm.CasadiSolver()` instead.
+  self._solver = solver or self._model.default_solver
+C:\Users\alexa\anaconda3\Lib\site-packages\pybamm\simulation.py:122: UserWarning: The default solver changed to IDAKLUSolver after the v25.4.0. release. You can swap back to the previous default by using `pybamm.CasadiSolver()` instead.
+  self._solver = solver or self._model.default_solver
+C:\Users\alexa\anaconda3\Lib\site-packages\pybamm\simulation.py:122: UserWarning: The default solver changed to IDAKLUSolver after the v25.4.0. release. You can swap back to the previous default by using `pybamm.CasadiSolver()` instead.
+  self._solver = solver or self._model.default_solver
+Table 2 recreated with the current repository: mean ± std over seeds (0, 1, 2). In brackets: Table 2 of the paper.
+RMSE [%] for t >= 600 s; CWC [%] with mu = 0.95, gamma = eta = 1 over the whole run.
+
+| Scenario | C-rate | Duration (h) | RMSE MIONet | RMSE ECM | CWC MIONet | CWC ECM |
+|---|---|---|---|---|---|---|
+| UDDS 1 | 1 | 2.00 (2) | 0.042 ± 0.001 (0.058) | 0.173 ± 0.011 (0.18) | 1.536 ± 0.000 (0.63) | 1.153 ± 0.000 (1.2) |
+| UDDS 2 | 3 | 1.00 (1) | 0.058 ± 0.002 (0.044) | 0.257 ± 0.018 (0.58) | 1.709 ± 0.000 (0.6) | 1.064 ± 0.001 (2.7) |
+| UDDS 3 | 5 | 1.00 (1) | 0.171 ± 0.004 (0.25) | 2.152 ± 0.034 (2.1) | 1.749 ± 0.000 (2.1) | 4.198 ± 0.012 (4.2) |
+| Ultra-slow charge | 0.1 | 6.00 (6) | 0.034 ± 0.000 (0.063) | 0.493 ± 0.006 (0.49) | 1.485 ± 0.000 (0.83) | 3.439 ± 0.008 (3.4) |
+| Slow charge | 0.2 | 3.89 (4) | 0.145 ± 0.001 (0.079) | 0.367 ± 0.025 (0.34) | 1.485 ± 0.000 (1.0) | 2.135 ± 0.779 (1.5) |
+| Moderate charge | 0.5 | 1.50 (1.5) | 0.101 ± 0.002 (0.13) | 0.297 ± 0.010 (0.31) | 1.650 ± 0.001 (1.6) | 1.416 ± 0.000 (3.0) |
+| Fast charge | 1 | 0.76 (0.8) | 0.275 ± 0.002 (0.45) | 0.400 ± 0.006 (0.37) | 1.968 ± 0.003 (2.7) | 2.821 ± 0.003 (2.8) |

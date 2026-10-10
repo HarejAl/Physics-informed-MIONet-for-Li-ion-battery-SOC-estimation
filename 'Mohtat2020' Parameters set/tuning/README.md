@@ -10,6 +10,7 @@ Produces `../observer_config.json` and the comparison tables. Run from this fold
 | 3 | `make_config.py [variant]` | writes `../observer_config.json` (default `li_avg`) | `../observer_config.json` |
 | 4 | `evaluate_test.py` | all variants and the ECM on the 12 paper cases, next to the archived results | `results/test_results.{md,json}` |
 | 5 | `seed_test.py` | 3 noise seeds on the 6 paper cases at 25 °C: final observer, public-release settings, ECM | `results/seed_test.{md,json}` |
+| 6 | `table2.py` | recreates Table 2 of the paper (7 scenarios, 3 seeds, MIONet vs ECM) | `results/table2.{md,json}` |
 
 `tune_nes.py` runs `python tune_nes.py li_avg 30 18 9` (30 generations, population 18,
 9 worker processes) in about 15 min.
