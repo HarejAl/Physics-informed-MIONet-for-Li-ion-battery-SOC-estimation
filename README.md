@@ -1,11 +1,37 @@
-The repository contains the following folders:
+# SOC_PIMIONet
 
-Training: code for training the two MIONets.
+Code for "Physics-informed operator learning for real-time battery state estimation"
+(Applied Energy, DOI: 10.1016/j.apenergy.2025.126987).
 
-TimeComplexityAnalysis: code to compare runtime and computational effort.
+## Repository structure
 
-HCCP test: code to simulate an HCCP test used to identify the ECM parameters.
+- `Training/`: training of the two MIONets (positive and negative electrode).
+- `TimeComplexityAnalysis/`: runtime and computational-effort comparison.
+- `HCCP_test/`: simulation of the HCCP test used to identify the ECM parameters.
+- `'Mohtat2020' Parameters set/`: MIONet- vs ECM-based observers, Mohtat2020 parameter set.
+  - `SOC_estimation_comparison.py`: main script. Simulates the plant, runs both observers and
+    prints the SOC RMSE and CWC.
+  - `observers.py`: MIONet observer (batched UKF) and ECM observer, plus metrics (RMSE, CWC).
+  - `utils.py`: plant (PyBaMM DFN), current profiles, SOC calculation.
+  - `observer_config.json`: settings of the MIONet observer, produced by `tuning/`.
+  - `tuning/`: fit of the measurement model and NES tuning of the UKF weights, test on the
+    paper cases (see `tuning/README.md`).
+  - `Saved_simulations/`: archived results of Fig. 9 / Table 2, with `plotting.py`.
+- `'Ai2020' Parameters set/`: MIONet- vs ECM-based observers for the Enertech cell (Ai2020
+  parameter set), including the experimental data and the archived results.
 
-Mohtat2020 (parameter set): code to run the comparison between MIONet- and ECM-based observers using the Mohtat2020 parameter set. All comparisons mentioned in the paper are saved in the Saved_simulations subfolder.
+## Quick start
 
-Ai2020 (parameter set): code to run the comparison between MIONet- and ECM-based observers for the Enertech cell (Ai2020 parameter set). This folder also includes the experimentally measured data. All comparisons mentioned in the paper are saved in the Saved_simulations subfolder.
+```bash
+pip install -r requirements.txt
+cd "'Mohtat2020' Parameters set"
+python SOC_estimation_comparison.py
+```
+
+To reproduce the observer settings and the comparison tables, run the steps in
+`'Mohtat2020' Parameters set/tuning/README.md`.
+
+## Environment
+
+Tested with Python 3.12.7, numpy 1.26.4, scipy 1.13.1, matplotlib 3.10.8, pybamm 25.8.0,
+filterpy 1.4.5, torch 2.6.0 (see `requirements.txt`).

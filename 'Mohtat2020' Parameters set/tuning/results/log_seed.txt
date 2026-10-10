@@ -1,0 +1,5 @@
+Traceback (most recent call last):
+  File "C:\Users\alexa\OneDrive - Politecnico di Milano\Desktop\Batteries\SOC_PIMIONet\REPO\SOC_PIMIONet\'Mohtat2020' Parameters set\tuning\seed_test.py", line 53, in <module>
+    md = ["3-seed test on the 25 °C paper cases. RMSE [%] (t >= 600 s) and CWC [%] (whole run), mean ± std over "
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ValueError: unsupported format character ']' (0x5d) at index 45

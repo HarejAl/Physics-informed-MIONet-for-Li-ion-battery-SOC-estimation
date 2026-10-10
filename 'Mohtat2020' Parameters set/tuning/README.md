@@ -1,27 +1,27 @@
-# Retuning the public MIONet observer
+# Tuning and testing the MIONet observer
 
-Retunes the observer in `../SOC_estimation_comparison.py` / `../utils.py`, after the public
-release turned out not to reproduce the archived Fig. 9 / Table 2 results.
+Produces `../observer_config.json` and the comparison tables. Run from this folder, in order:
 
-Pipeline (run from this folder, in order):
+| step | script | what it does | output |
+|---|---|---|---|
+| 0 | `make_data.py` | training set: 5 new plant simulations, not used in the paper. Test set: the 12 archived cases in `../Saved_simulations`. Noise-free re-simulation of the 6 paper cases at 25 °C | `data/` |
+| 1 | `fit_measurement.py` | least-squares fit of the ohmic term `k_ohm` on the true plant states, and the target of the particle-averaged lithium balance (training set) | `results/measurement_fit.json` |
+| 2 | `tune_nes.py <variant>` | SNES tuning of the UKF weights (log10 of P0, q, rV, rLi) on the training set; variants `li_avg`, `li_surface`, `no_li` | `results/nes_<variant>.json` |
+| 3 | `make_config.py [variant]` | writes `../observer_config.json` (default `li_avg`) | `../observer_config.json` |
+| 4 | `evaluate_test.py` | all variants and the ECM on the 12 paper cases, next to the archived results | `results/test_results.{md,json}` |
+| 5 | `seed_test.py` | 3 noise seeds on the 6 paper cases at 25 °C: final observer, public-release settings, ECM | `results/seed_test.{md,json}` |
 
-1. `make_data.py`: training set (5 new plant simulations, not used in the paper) and
-   test set (the 12 archived Mohtat2020 cases in `../Saved_simulations`). Output in `data/`.
-2. `fit_ohmic.py`: least-squares fit of the ohmic term `k_ohm` of the measurement model
-   on the true plant states of the training set. Output in `k_ohm.json` (1/465 Ohm; public 1/600).
-3. `tune_nes.py <li_surface|no_li|li_avg>`: SNES tuning of the UKF weights
-   (log10 P0, q, rV, rLi) on the training set. Output in `results/nes_<variant>.json`.
-4. `evaluate_test.py`: evaluates all variants on the test set. Output in
-   `results/test_results.{md,json}`.
-
-`fast_ukf.py` is a batched copy of the public UKF: all sigma points go through the
-MIONets and the measurement model in a single call, about 150x faster. Checked against the
-public FilterPy run (0.5C charge: RMSE 6.639e-1 vs 6.634e-1, states within 1.6e-5).
+`tune_nes.py` runs `python tune_nes.py li_avg 30 18 9` (30 generations, population 18,
+9 worker processes) in about 15 min.
 
 Notes:
-- `li_avg` replaces the surface-node lithium balance of the public script (not conserved,
-  target 0.9454 biased) with the particle-averaged one (conserved to < 1e-4, target 0.94116).
-- The evaluation clamps concentrations to [0.05, 0.95] **only inside j0**. The OCV, the state
-  and the sigma points stay unclamped. Without the clamp, every variant fails at the end
-  of the 1C charge.
-- One noise realisation per case; the ECM was not retuned (paper ECM numbers are the archived ones).
+- **NES objective:** mean SOC RMSE over the training scenarios (t ≥ 600 s, capped at 20 %
+  per scenario), plus a penalty if the 2σ coverage drops below 90 %. The penalty stops NES
+  from buying RMSE with an over-confident filter.
+- **Lithium balance:** `li_avg` uses the particle-averaged concentrations, which the plant
+  conserves to < 1e-4. `li_surface` (public release) uses the surface nodes, which are not
+  conserved during current flow.
+- **Clamp:** concentrations are clamped to [0.05, 0.95] only inside j0. Without it, the
+  observer fails at the end of the 1C charge.
+- **Temperature:** the MIONets were trained at 25 °C, so the observer is less accurate at
+  other temperatures (UDDS 10–40 °C cases).
