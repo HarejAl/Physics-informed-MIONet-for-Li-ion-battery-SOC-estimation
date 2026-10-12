@@ -29,6 +29,15 @@ PAPER = {0.1: (0.20, 0.95), 0.5: (0.35, 1.40), 1: (0.58, 2.10)}  # Table 3: MION
 ARCHIVE = {0.5: "CC_05_exp_4", 1: "CC_1_exp_4"}
 SEEDS = (0, 1, 2)
 NOISE = 1e-3
+ECM_CFG = os.path.join(os.path.dirname(HERE), "ecm_config.json")  # NES-tuned ECM (tune_nes.py --ecm)
+
+
+def ecms():
+    out = {"ECM": ob.ECMObserver()}
+    if os.path.exists(ECM_CFG):
+        cfg = json.load(open(ECM_CFG)); cfg.pop("source", None)
+        out["ECM (NES)"] = ob.ECMObserver(**cfg)
+    return out
 
 
 def run_exp(CR):
@@ -36,8 +45,9 @@ def run_exp(CR):
     I = np.full(len(V), utils_ai.C_RATE_CAPACITY * CR)
     fit = json.load(open(os.path.join(HERE, "results", "measurement_fit.json")))
     kw = dict(soc_0=0.5, sigma_v=fit["sigma_v_exp"], r_extra=fit["r_extra"])
-    return CR, "exp", {"MIONet": ob.metrics(ob.MIONetObserver(25).run(V, I, **kw), soc_ref),
-                       "ECM": ob.metrics(ob.ECMObserver().run(V, I, **kw), soc_ref)}
+    out = {"MIONet": ob.metrics(ob.MIONetObserver(25).run(V, I, **kw), soc_ref)}
+    out.update({k: ob.metrics(e.run(V, I, **kw), soc_ref) for k, e in ecms().items()})
+    return CR, "exp", out
 
 
 def run_sim(args):
@@ -45,8 +55,9 @@ def run_sim(args):
     d = np.load(os.path.join(HERE, "data", "simtest_%s.npz" % {0.5: "05C", 1: "1C", 2: "2C"}[CR]))
     rng = np.random.default_rng(1000 * seed + 3); n = len(d["V_clean"])
     V, I = d["V_clean"] + rng.normal(0, NOISE, n), d["I_clean"] + rng.normal(0, NOISE, n)
-    return CR, seed, {"MIONet": ob.metrics(ob.MIONetObserver(25).run(V, I), d["soc_ref"]),
-                      "ECM": ob.metrics(ob.ECMObserver().run(V, I), d["soc_ref"])}
+    out = {"MIONet": ob.metrics(ob.MIONetObserver(25).run(V, I), d["soc_ref"])}
+    out.update({k: ob.metrics(e.run(V, I), d["soc_ref"]) for k, e in ecms().items()})
+    return CR, seed, out
 
 
 def archive_rmse(CR):
@@ -69,17 +80,21 @@ if __name__ == "__main__":
     json.dump(res, open(os.path.join(HERE, "results", "table3.json"), "w"), indent=1)
 
     f = lambda m: "%.2f (CWC %.2f, PICP %.2f)" % (m["rmse"], m["cwc"], m["picp"])
-    md = ["Table 3 recreated: SOC RMSE [%] (t >= 600 s); CWC [%] and PICP over the whole run.", "",
-          "| C-rate | paper MIONet / ECM | archive MIONet / ECM | measured: MIONet | measured: ECM | simulated (3 seeds): MIONet | simulated: ECM |",
-          "|---|---|---|---|---|---|---|"]
+    obsv = list(res[str(CRS[0])]["exp"])
+    md = ["Table 3 recreated: SOC RMSE [%] (t >= 600 s); CWC [%] and PICP over the whole run. 2C is the "
+          "calibration/tuning case; 0.5C and 1C are test cases. 'ECM' = original settings, 'ECM (NES)' = tuned "
+          "on the same objective as the MIONet.", "",
+          "| C-rate | paper MIONet / ECM | archive MIONet / ECM | " + " | ".join("measured: " + k for k in obsv)
+          + " | " + " | ".join("simulated (3 seeds): " + k for k in obsv) + " |", "|---|---|---|" + "---|" * (2 * len(obsv))]
     for c in (0.1,) + CRS:
         p = "%.2f / %.2f" % PAPER[c] if c in PAPER else "-"
         a = archive_rmse(c); a = "%.2f / %.2f" % a if a else "-"
         if str(c) not in res:
-            md.append("| %g | %s | %s | no measured data | | | |" % (c, p, a)); continue
+            md.append("| %g | %s | %s | no measured data |" % (c, p, a) + " |" * (2 * len(obsv) - 1)); continue
         e = res[str(c)]["exp"]
         sm = lambda k: "%.3f ± %.3f" % (np.mean([res[str(c)]["sim"][s][k]["rmse"] for s in SEEDS]),
                                          np.std([res[str(c)]["sim"][s][k]["rmse"] for s in SEEDS]))
-        md.append("| %g%s | %s | %s | %s | %s | %s | %s |" % (c, " (calibration)" if c == 2 else "", p, a, f(e["MIONet"]), f(e["ECM"]), sm("MIONet"), sm("ECM")))
+        md.append("| %g%s | %s | %s | %s | %s |" % (c, " (calibration)" if c == 2 else "", p, a,
+                                                 " | ".join(f(e[k]) for k in obsv), " | ".join(sm(k) for k in obsv)))
     open(os.path.join(HERE, "results", "table3.md"), "w", encoding="utf-8").write("\n".join(md) + "\n")
     print("\n".join(md))

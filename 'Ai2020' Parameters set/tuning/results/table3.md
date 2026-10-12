@@ -1,8 +1,8 @@
-Table 3 recreated: SOC RMSE [%] (t >= 600 s); CWC [%] and PICP over the whole run.
+Table 3 recreated: SOC RMSE [%] (t >= 600 s); CWC [%] and PICP over the whole run. 2C is the calibration/tuning case; 0.5C and 1C are test cases. 'ECM' = original settings, 'ECM (NES)' = tuned on the same objective as the MIONet.
 
-| C-rate | paper MIONet / ECM | archive MIONet / ECM | measured: MIONet | measured: ECM | simulated (3 seeds): MIONet | simulated: ECM |
-|---|---|---|---|---|---|---|
-| 0.1 | 0.20 / 0.95 | - | no measured data | | | |
-| 0.5 | 0.35 / 1.40 | 1.41 / 2.91 | 0.83 (CWC 10.86, PICP 0.39) | 1.18 (CWC 11.71, PICP 0.89) | 0.381 ± 0.004 | 2.199 ± 0.102 |
-| 1 | 0.58 / 2.10 | 1.65 / 5.76 | 0.44 (CWC 16.06, PICP 0.72) | 1.66 (CWC 13.80, PICP 0.54) | 0.726 ± 0.006 | 0.832 ± 0.035 |
-| 2 (calibration) | - | - | 1.53 (CWC 30.63, PICP 0.67) | 3.33 (CWC 14.94, PICP 0.35) | 1.165 ± 0.005 | 2.912 ± 0.057 |
+| C-rate | paper MIONet / ECM | archive MIONet / ECM | measured: MIONet | measured: ECM | measured: ECM (NES) | simulated (3 seeds): MIONet | simulated (3 seeds): ECM | simulated (3 seeds): ECM (NES) |
+|---|---|---|---|---|---|---|---|---|
+| 0.1 | 0.20 / 0.95 | - | no measured data | | | | | |
+| 0.5 | 0.35 / 1.40 | 1.41 / 2.91 | 0.83 (CWC 10.86, PICP 0.39) | 1.18 (CWC 11.71, PICP 0.89) | 1.66 (CWC 31.51, PICP 0.85) | 0.381 ± 0.004 | 2.199 ± 0.102 | 1.084 ± 0.001 |
+| 1 | 0.58 / 2.10 | 1.65 / 5.76 | 0.44 (CWC 16.06, PICP 0.72) | 1.66 (CWC 13.80, PICP 0.54) | 0.80 (CWC 25.70, PICP 0.88) | 0.726 ± 0.006 | 0.832 ± 0.035 | 0.665 ± 0.004 |
+| 2 (calibration) | - | - | 1.53 (CWC 30.63, PICP 0.67) | 3.33 (CWC 14.94, PICP 0.35) | 1.23 (CWC 26.37, PICP 0.82) | 1.165 ± 0.005 | 2.912 ± 0.057 | 2.148 ± 0.005 |
