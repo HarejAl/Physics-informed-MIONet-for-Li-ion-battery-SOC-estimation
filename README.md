@@ -18,7 +18,12 @@ Code for "Physics-informed operator learning for real-time battery state estimat
     paper cases (see `tuning/README.md`).
   - `Saved_simulations/`: archived results of Fig. 9 / Table 2, with `plotting.py`.
 - `'Ai2020' Parameters set/`: MIONet- vs ECM-based observers for the Enertech cell (Ai2020
-  parameter set), including the experimental data and the archived results.
+  parameter set), validated on measured discharges.
+  - `Soc_estimation_comparison.py`: main script (measured or simulated 0.5C / 1C / 2C discharge).
+  - `observers_ai.py`, `utils_ai.py`, `observer_config.json`: observers, plant, settings.
+  - `CC_05.npy`, `CC_1.npy`, `CC_2.npy`: measured discharges (time, voltage, SOC ramp).
+  - `tuning/`: calibration, NES tuning and Table 3 (see `tuning/README.md`).
+  - `Saved_simulations/`: archived results of the original script.
 
 ## Quick start
 
